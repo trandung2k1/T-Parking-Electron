@@ -1,3 +1,21 @@
-// oxlint-disable eslint-plugin-unicorn/no-empty-file
-// See the Electron documentation for details on how to use preload scripts:
-// https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
+import { contextBridge, ipcRenderer } from 'electron';
+import { assertFiniteNumber } from './lib/number';
+import {
+  PARKING_NATIVE_IPC,
+  type ParkingNativeApi,
+} from './native/parking-addon.types';
+
+const parkingNativeApi: ParkingNativeApi = {
+  getVersion: () => ipcRenderer.invoke(PARKING_NATIVE_IPC.getVersion),
+  addNumbers: (left, right) => {
+    const leftNumber = assertFiniteNumber(left, 'left');
+    const rightNumber = assertFiniteNumber(right, 'right');
+    return ipcRenderer.invoke(
+      PARKING_NATIVE_IPC.addNumbers,
+      leftNumber,
+      rightNumber,
+    );
+  },
+};
+
+contextBridge.exposeInMainWorld('parkingNative', parkingNativeApi);

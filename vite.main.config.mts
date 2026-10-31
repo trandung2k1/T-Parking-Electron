@@ -1,4 +1,6 @@
 import { defineConfig } from 'vite';
+import { productionBuildOptions } from './vite.shared.mts';
 
-// https://vitejs.dev/config
-export default defineConfig({});
+export default defineConfig({
+  build: productionBuildOptions('main'),
+});
